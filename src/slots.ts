@@ -1,8 +1,11 @@
 import { IntervalTree } from "./interval-tree";
 
 export interface GetCalendarParams {
+  // The calendar ID to get events from.
   calendarId?: string;
+  // The start of the period to get events from.
   from: Date;
+  // The end of the period to get events from.
   to: Date;
 }
 
@@ -23,7 +26,9 @@ export interface GetSlotsParams {
 }
 
 export interface Slot {
+  // The start of the slot.
   start: Date;
+  // The end of the slot.
   end: Date;
 }
 
@@ -49,16 +54,15 @@ export function getSlots(params: GetCalendarParams & GetSlotsParams): Slot[] {
   const currentDate = new Date(params.from);
   const endDate = new Date(params.to);
 
-  // Loop through each day between the start and end date
-  // and check for available slots.
   while (currentDate <= endDate) {
-    const { start, end } = getStartAndEndOfDay(currentDate, params);
-
-    const events = intervalTree
-      .search(start.getTime(), end.getTime())
-      .sort((a, b) => a.start - b.start);
-
     if (daysAllowed.includes(currentDate.getDay())) {
+      // Get the start and end of the day
+      const { start, end } = getStartAndEndOfDay(currentDate, params);
+      // Find all events for the day
+      const events = intervalTree
+        .search(start.getTime(), end.getTime())
+        .sort((a, b) => a.start - b.start);
+
       // If there is not events, add the whole day as a slot
       if (events.length === 0) {
         allPossibleSlots.push({ start, end });
