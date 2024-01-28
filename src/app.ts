@@ -126,6 +126,9 @@ export function CloseSettings() {
   return CardService.newNavigation().popCard();
 }
 
+/**
+ * Save the form inputs to short term cache.
+ */
 function saveCache(
   formInputs: GoogleAppsScript.Addons.CommonEventObject["formInputs"]
 ) {
@@ -205,9 +208,10 @@ function saveUserSettings(
 }
 
 /**
- * Get a string input from the form inputs. If the input is not
- * required and doesn't exist, return an empty string.
- * Otherwise throw an error.
+ * Get a string input from the form inputs.
+ * @param formInputs The formInput from the event object
+ * @param name The name of the input
+ * @param isRequired Whether the input is required
  */
 function getStringInput(
   formInputs: GoogleAppsScript.Addons.CommonEventObject["formInputs"],
