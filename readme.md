@@ -2,12 +2,12 @@
 
 ![Screenthos showing and example of the addon](/static/example.png)
 
-Time Suggest is a simple plugin to Google Calendar and Gmail that finds aviable timeslots in your calendar for you to suggest meetings during. Addon is still under development and hasn't been published to Google Workspace Marketplace. But feel free to clone the repo and install it yourself. It's working.
+Time Suggest is a simple plugin for Google Calendar and Gmail that finds available time slots in your calendar for you to suggest meeting times. The add-on is still under development and has not been published to the Google Workspace Marketplace. However, feel free to clone the repository and install it yourself.
 
 ## Guide
-To install the addon, you can clone this repo and enter your ScriptID manually in a `.clap-dev.json` file. And then push it with `npm run push`. This will build the the script and push it with clasp. 
+To install the add-on, clone this repository and manually enter your ScriptID in a `.clasp-dev.json` file. Then, deploy it using `npm run push`. This command will build the script with [rollup.js](https://github.com/rollup/rollup) and deploy it using [clasp](https://github.com/google/clasp).
 
-Example .clasp-dev.json
+Example of a .clasp-dev.json file:
 ```json
 {
     "scriptId":"YOUR_SCRIP_ID",
@@ -16,7 +16,7 @@ Example .clasp-dev.json
 ```
 
 ### Template
-You can customize the snippet/output template with the help of two variables. The default template looks like this, you'll figure it out.
+Customize the snippet/output template using two variables. The default template is as follows, and you can modify it as needed:
 
 ```
 Would {{duration}} min work during any of these times?
