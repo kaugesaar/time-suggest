@@ -4,7 +4,7 @@ import { StateManager } from "./state";
 import { DurationSection } from "./components/duration";
 
 /**
- * RunApp is the main function that builds the app.
+ * App is the main function that builds the app.
  */
 export function App() {
   // OpenSettings is the action that gets called when the settings button is clicked.
@@ -31,6 +31,9 @@ export function App() {
     .build();
 }
 
+/**
+ * Settings is the function that builds the settings card.
+ */
 export function Settings() {
   // SaveSettings is the action that gets called when the app changes.
   const SaveSettings = CardService.newAction().setFunctionName("SaveSettings");
@@ -201,6 +204,11 @@ function saveUserSettings(
   );
 }
 
+/**
+ * Get a string input from the form inputs. If the input is not
+ * required and doesn't exist, return an empty string.
+ * Otherwise throw an error.
+ */
 function getStringInput(
   formInputs: GoogleAppsScript.Addons.CommonEventObject["formInputs"],
   name: string,

@@ -42,8 +42,6 @@ export function DurationSection(state: StateManager) {
  * @returns the duration input widget.
  */
 function DurationInput(duration: string) {
-  // Just make som simple duation suggestion with 5 min
-  // incremental suggestions. You can enter w/e you want.
   const durationSuggestions = () => {
     return CardService.newSuggestions().addSuggestions(
       Array.from({ length: 30 }, (_, i) => (15 + i * 5).toString())

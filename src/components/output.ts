@@ -92,7 +92,7 @@ function formatDateRange(start: Date, end: Date, i18n: Lang) {
     );
   };
 
-  // Determine if the date is today, tomorrow, or another day
+  // Determine if the date is today, tomorrow, or any another day.
   const today = formatDate(new Date());
   const tomorrow = formatDate(new Date(Date.now() + 1000 * 60 * 60 * 24));
 
