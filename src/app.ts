@@ -75,9 +75,7 @@ export function Settings() {
  * @returns A CardNavigation object that renders the app with the new state.
  */
 export function SaveSettings(e: GoogleAppsScript.Addons.EventObject) {
-  // Remove the cache so we don't use the old state.
-  CacheService.getUserCache().removeAll(["duration", "startDate", "endDate"]);
-  // Save the settings to UserProperties
+  emptyUserCache();
   saveUserSettings(e.commonEventObject.formInputs);
 
   const nav = CardService.newActionResponseBuilder()
@@ -94,10 +92,7 @@ export function SaveSettings(e: GoogleAppsScript.Addons.EventObject) {
  * @returns A CardNavigation object that renders the app card.
  */
 export function Generate(e: GoogleAppsScript.Addons.EventObject) {
-  // Save the form inputs to short term cache.
-  // Currently set to 30 minutes.
   saveCache(e.commonEventObject.formInputs);
-
   return CardService.newNavigation().updateCard(App());
 }
 
@@ -106,7 +101,7 @@ export function Generate(e: GoogleAppsScript.Addons.EventObject) {
  * @returns A CardNavigation object that renders the app card.
  */
 export function EmptyCache() {
-  CacheService.getUserCache().removeAll(["duration", "startDate", "endDate"]);
+  emptyUserCache();
   return CardService.newNavigation().updateCard(App());
 }
 
@@ -133,18 +128,15 @@ function saveCache(
   formInputs: GoogleAppsScript.Addons.CommonEventObject["formInputs"]
 ) {
   const cache = CacheService.getUserCache();
-  const cacheDuration = 1800; // 30 minutes
+  const cacheDuration = 1800;
 
-  // Get the duration
   const duration = getStringInput(formInputs, "duration");
 
-  // Get the start date
   const startDate = formInputs.startDate.dateInput?.msSinceEpoch;
   if (!startDate) {
     throw new Error("Start date is required");
   }
 
-  // Get the end date
   const endDate = formInputs.endDate.dateInput?.msSinceEpoch;
   if (!endDate) {
     throw new Error("End date is required");
@@ -153,6 +145,13 @@ function saveCache(
   cache.put("duration", duration, cacheDuration);
   cache.put("startDate", JSON.stringify(new Date(startDate)), cacheDuration);
   cache.put("endDate", JSON.stringify(new Date(endDate)), cacheDuration);
+}
+
+/**
+ * Remove the short term cache.
+ */
+function emptyUserCache() {
+  CacheService.getUserCache().removeAll(["duration", "startDate", "endDate"]);
 }
 
 /**
@@ -218,7 +217,7 @@ function getStringInput(
   name: string,
   isRequired: boolean = true
 ) {
-  const inputExists = formInputs[name]?.stringInputs !== null;
+  const inputExists = formInputs[name]?.stringInputs != null;
 
   if (isRequired && !inputExists) {
     throw new Error(`${name} is required`);
