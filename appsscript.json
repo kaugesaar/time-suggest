@@ -1,0 +1,32 @@
+{
+  "timeZone": "Europe/Berlin",
+  "dependencies": {
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/calendar.readonly",
+    "https://www.googleapis.com/auth/calendar.addons.execute",
+    "https://www.googleapis.com/auth/gmail.addons.execute"
+  ],
+  "runtimeVersion": "V8",
+  "addOns": {
+    "common": {
+      "name": "Time Suggest",
+      "logoUrl": "https://storage.googleapis.com/kaugesaar-com/icons/calendar-addon.png?cb=1",
+      "layoutProperties": {
+        "primaryColor": "#0f172a",
+        "secondaryColor": "#4f46e5"
+      }
+    },
+    "calendar": {
+      "homepageTrigger": {
+        "runFunction": "onHomePage"
+      }
+    },
+    "gmail": {
+      "homepageTrigger": {
+        "runFunction": "onHomePage"
+      }
+    }
+  }
+}

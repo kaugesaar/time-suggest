@@ -1,0 +1,19 @@
+{
+  "overrides": [
+    {
+      "files": "*.ts",
+      "options": {
+        "singleQuote": false,
+        "trailingComma": "es5",
+        "arrowParens": "avoid",
+        "quoteProps": "consistent"
+      }
+    },
+    {
+      "files": "*.html",
+      "options": {
+        "printWidth": 120
+      }
+    }
+  ]
+}
