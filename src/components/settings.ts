@@ -26,7 +26,7 @@ export function SettingsSection(state: State) {
       SettingsHeader(
         "Template settings",
         "Change the default template.",
-        "https://github.com/kaugesaar/time-suggestion#template"
+        "https://github.com/kaugesaar/time-suggest#template"
       )
     )
     .addWidget(TemplateEditor(state.settings?.template));
