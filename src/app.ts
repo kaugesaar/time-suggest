@@ -3,15 +3,18 @@ import { SettingsSection } from "./components/settings";
 import { StateManager } from "./state";
 import { DurationSection } from "./components/duration";
 
+const handlers = {
+  OpenSettings: CardService.newAction().setFunctionName("OpenSettings"),
+  SaveSettings: CardService.newAction().setFunctionName("SaveSettings"),
+  CloseSettings: CardService.newAction().setFunctionName("CloseSettings"),
+};
+
 /**
  * App is the main function that builds the app.
  */
 export function App() {
-  // OpenSettings is the action that gets called when the settings button is clicked.
-  const OpenSettings = CardService.newAction().setFunctionName("OpenSettings");
-  // Load the state from UserProperties
   const state = new StateManager();
-  // Build the app
+
   return CardService.newCardBuilder()
     .addSection(
       CardService.newCardSection().addWidget(
@@ -21,7 +24,7 @@ export function App() {
           .setButton(
             CardService.newTextButton()
               .setText("Edit")
-              .setOnClickAction(OpenSettings)
+              .setOnClickAction(handlers.OpenSettings)
           )
           .setWrapText(true)
       )
@@ -35,14 +38,8 @@ export function App() {
  * Settings is the function that builds the settings card.
  */
 export function Settings() {
-  // SaveSettings is the action that gets called when the app changes.
-  const SaveSettings = CardService.newAction().setFunctionName("SaveSettings");
-  // CloseSettings is the action that gets called when the settings card is closed.
-  const CloseSettings =
-    CardService.newAction().setFunctionName("CloseSettings");
-  // Load the state from UserProperties
   const state = new StateManager().getState();
-  // Build the settings card
+
   return CardService.newCardBuilder()
     .addSection(
       CardService.newCardSection().addWidget(
@@ -53,7 +50,7 @@ export function Settings() {
           .setButton(
             CardService.newTextButton()
               .setText("Back")
-              .setOnClickAction(CloseSettings)
+              .setOnClickAction(handlers.CloseSettings)
           )
       )
     )
@@ -64,7 +61,7 @@ export function Settings() {
           .setText("Save settings")
           .setTextButtonStyle(CardService.TextButtonStyle.FILLED)
           .setBackgroundColor("#4f46e5")
-          .setOnClickAction(SaveSettings)
+          .setOnClickAction(handlers.SaveSettings)
       )
     )
     .build();
@@ -164,23 +161,8 @@ function saveUserSettings(
   const duration = getStringInput(formInputs, "duration");
   const numDays = getStringInput(formInputs, "numDays");
 
-  const startOfDay = formInputs.startOfDay.timeInput;
-  if (!startOfDay) {
-    throw new Error("Start of day is required");
-  }
-  // Apparently minutes is not set if the user doesn't change it.
-  if (!startOfDay.minutes) {
-    startOfDay.minutes = 0;
-  }
-
-  const endOfDay = formInputs.endOfDay.timeInput;
-  if (!endOfDay) {
-    throw new Error("End of day is required");
-  }
-  // Apparently minutes is not set if the user doesn't change it.
-  if (!endOfDay.minutes) {
-    endOfDay.minutes = 0;
-  }
+  const startOfDay = getTimeInput(formInputs, "startOfDay");
+  const endOfDay = getTimeInput(formInputs, "endOfDay");
 
   const includeWeekends =
     getStringInput(formInputs, "includeWeekends", false) === "true";
@@ -228,4 +210,46 @@ function getStringInput(
   }
 
   return formInputs[name]?.stringInputs?.value[0] ?? "";
+}
+
+/**
+ * Get timeInput from the form inputs.
+ * @param formInputs The formInput from the event object
+ * @param name The name of the input
+ * @param isRequired Whether the input is required
+ */
+function getTimeInput(
+  formInputs: GoogleAppsScript.Addons.CommonEventObject["formInputs"],
+  name: string,
+  isRequired: boolean = true,
+  defaultValue: { hours: number; minutes: number } = { hours: 0, minutes: 0 }
+) {
+  const inputExists = formInputs[name] != null;
+
+  if (isRequired && !inputExists) {
+    throw new Error(`${name} is required`);
+  }
+
+  if (!inputExists) {
+    return defaultValue;
+  }
+
+  const timeInputExists = formInputs[name].timeInput != null;
+  if (!timeInputExists) {
+    return defaultValue;
+  }
+
+  const formInput = formInputs[name].timeInput;
+
+  if (!formInput) {
+    return defaultValue;
+  }
+
+  // Apparently minutes is not set if the user doesn't change it from 0.
+  // So we set it to 0 :)))
+  if (formInput.minutes == null) {
+    formInput.minutes = 0;
+  }
+
+  return formInput;
 }
