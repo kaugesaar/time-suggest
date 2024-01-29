@@ -45,7 +45,6 @@ export function getSlots(params: GetCalendarParams & GetSlotsParams): Slot[] {
 
   const calendarEvents = getEventsFromCalendar(params);
 
-  // Build an interval tree from the calendar events
   const intervalTree = new IntervalTree();
   calendarEvents.forEach(event => {
     intervalTree.insert(event.timeStart, event.timeEnd);
@@ -56,18 +55,14 @@ export function getSlots(params: GetCalendarParams & GetSlotsParams): Slot[] {
 
   while (currentDate <= endDate) {
     if (daysAllowed.includes(currentDate.getDay())) {
-      // Get the start and end of the day
       const { start, end } = getStartAndEndOfDay(currentDate, params);
-      // Find all events for the day
       const events = intervalTree
         .search(start.getTime(), end.getTime())
         .sort((a, b) => a.start - b.start);
 
-      // If there is not events, add the whole day as a slot
       if (events.length === 0) {
         allPossibleSlots.push({ start, end });
       } else {
-        // Check if there is a slot before the first event
         if (events[0].start - start.getTime() >= slotDurationMs) {
           allPossibleSlots.push({
             start: start,
@@ -75,7 +70,6 @@ export function getSlots(params: GetCalendarParams & GetSlotsParams): Slot[] {
           });
         }
 
-        // Check if there is a slot between events
         for (let i = 0; i < events.length - 1; i++) {
           const gap = events[i + 1].start - events[i].end;
           if (gap >= slotDurationMs) {
@@ -86,7 +80,6 @@ export function getSlots(params: GetCalendarParams & GetSlotsParams): Slot[] {
           }
         }
 
-        // Check if there is a slot after the last event
         if (end.getTime() - events[events.length - 1].end >= slotDurationMs) {
           allPossibleSlots.push({
             start: new Date(events[events.length - 1].end),
@@ -99,12 +92,9 @@ export function getSlots(params: GetCalendarParams & GetSlotsParams): Slot[] {
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
-  // It is ugly, but it works.
   const suggestedSlots = allPossibleSlots.filter(slot => {
-    // Add/Subtract 1ms to avoid overlap
     const slotStart = slot.start.getTime() + 1;
     const slotEnd = slot.end.getTime() - 1;
-
     return intervalTree.search(slotStart, slotEnd).length === 0;
   });
 
@@ -118,15 +108,12 @@ export function getSlots(params: GetCalendarParams & GetSlotsParams): Slot[] {
 function getEventsFromCalendar({ calendarId, from, to }: GetCalendarParams) {
   let calendar: GoogleAppsScript.Calendar.Calendar;
 
-  // If no calendarId is provided, use the default calendar.
   if (!calendarId) {
     calendar = CalendarApp.getDefaultCalendar();
   } else {
     calendar = CalendarApp.getCalendarById(calendarId);
   }
 
-  // Set the time to the start and end of the day.
-  // This is to make sure we get all events for the day.
   from.setHours(0, 0, 0, 0);
   to.setHours(23, 59, 59, 999);
 
